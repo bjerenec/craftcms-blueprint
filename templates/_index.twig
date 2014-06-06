@@ -1,0 +1,335 @@
+{% extends "_layouts/cp" %}
+{% set centered = true %}
+
+{% set title = "Blueprint"|t %}
+
+
+{% macro table3col(data, url) %}
+
+    <table class="data fullwidth collapsible">
+      <thead>
+        <th scope="col">{{ "Name"|t }}</th>
+        <th scope="col">{{ "Type"|t }}</th>
+        <th scope="col">{{ "Handle"|t }}</th>
+      </thead>
+
+
+      <tbody>
+
+      {% for key, values in data | group('name') %}
+        {% set first = values[0] %}
+        <tr class="first level tint">
+          <th scope="row" width="25%"><a href="{{ url(url ~ first.id) }}">{{ key|t }}</a> <span class="items-num">{{ values|length }} {{ 'field(s)'|t }}</span></th>
+          <td width="35%">{% if first.type is defined %}{{ first.type }}{% endif %}</td>
+          <td width="40%">{% if first.handle is defined %}{{ first.handle }}{% endif %}</td>
+        </tr>
+
+        {% for field in values %}
+          <tr class="compact fields second level">
+              <td class="name"><a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a></td>
+              <td>{{ field.fType }}</td>
+              <td class="code">{{ field.fHandle }}</td>
+          </tr>
+        {% endfor %}
+      {% endfor %}
+
+      </tbody>
+    </table>
+
+{% endmacro %}
+
+{% import _self as macros %}
+
+
+{% set sidebar %}
+<h2>{{ 'Filter'|t }}</h2>
+<input type="search" id="bp-search" placeholder="{{ 'Search'|t }}">
+
+<nav class="bp-nav">
+  <ul data-level="1">
+    <li class="heading"><span>{{ 'Show'|t }}</span></li>
+    <li><a href="#all" class="bp-showall">{{ 'All'|t }}</a></li>
+    <li><a href="#sections-structure">{{ 'Structures'|t }}</a></li>
+    <li><a href="#sections-channel">{{ 'Channels'|t }}</a></li>
+    <li><a href="#sections-single">{{ 'Singles'|t }}</a></li>
+    <li><a href="#globalsets">{{ 'Global Sets'|t }}</a></li>
+    <li><a href="#assetsources">{{ 'Asset Sources'|t }}</a></li>
+    <li><a href="#assettransforms">{{ 'Asset Transforms'|t }}</a></li>
+    <li><a href="#categorygroups">{{ 'Category Groups'|t }}</a></li>
+    <li><a href="#taggroups">{{ 'Tag Groups'|t }}</a></li>
+  </ul>
+</nav>
+
+<div class="small-info">
+  Shift-Click: scroll to target<br>
+  Alt-Click: toggle others (TODO)
+</div>
+
+{% endset %}
+
+
+{% set content %}
+
+<div class="blueprint" id="all">
+
+  <section id="sections">
+
+      {% for sectionType, sections in bp.sections | group('type') %}
+
+      <section id="sections-{{ sectionType }}">
+
+      <h2>{{ 'Sections'|t }} / {{ sectionType }}s</h2>
+
+
+      <table id="sets" class="data fullwidth collapsible">
+        <thead>
+          <th scope="col" width="25%">{{ "Name"|t }}</th>
+          <th scope="col" width="15%">{{ "Type"|t }}</th>
+          <th scope="col" width="20%">{{ "Handle"|t }}</th>
+          <th scope="col" width="40%">{{ "Twig Variable"|t }}</th>
+        </thead>
+
+        <tbody>
+
+        {% for sectionName, sectionsByName in sections | group('name') %}
+
+        <tr class="first level tint">
+          <th scope="row"><a href="{{ url('settings/sections/' ~ sectionsByName[0].id) }}">{{ sectionName }}</a></th>
+          <td>{{ sectionType }}</td>
+          <td class="code">{{ sectionsByName[0].handle }}</td>
+          <td> </td>
+        </tr>
+
+          {% for sectionEntryType, sectionsByEntryType in sectionsByName | group('etName') %}
+
+            <tr class="second level compact">
+              <td class="name"><strong><a href="{{ url('settings/sections/' ~ sectionsByName[0].id ~ '/entrytypes/' ~ sectionsByEntryType[0].etId) }}">{{ sectionEntryType }}</a></strong> <span class="items-num">{{ sectionsByEntryType|length }} {{ 'field(s)'|t }}</span></td>
+              <td>{{ 'Entry Type'|t }}</td>
+              <td class="code">{{ sectionsByEntryType[0].etHandle }}</td>
+              <td> </td>
+            </tr>
+
+            {% for field in sectionsByEntryType %}
+
+              <tr class="compact fields third level">
+                  <td class="name">
+                    <a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a>
+                  </td>
+
+                  <td>
+                    {{ field.fType }}
+                  </td>
+
+                  <td class="code">
+                    {{ field.fHandle }}
+                  </td>
+
+                  <td class="code">
+                    {{ field.handle }}.{{ field.fHandle }}
+                  </td>
+
+                </tr>
+
+            {% endfor %}
+
+          {% endfor %}
+        {% endfor %}
+
+      </tbody>
+      </table>
+    </section>
+
+    {% endfor %}
+
+</section>
+
+
+
+<section id="globalsets">
+
+  <h2>{{ 'Global Sets'|t }}</h2>
+
+  <table id="sets" class="data fullwidth collapsible">
+    <thead>
+      <th scope="col" width="25%">{{ "Name"|t }}</th>
+      <th scope="col" width="15%">{{ "Type"|t }}</th>
+      <th scope="col" width="20%">{{ "Handle"|t }}</th>
+      <th scope="col" width="40%">{{ "Twig Variable"|t }}</th>
+    </thead>
+
+    <tbody>
+
+    {% for globalName, values in bp.globals | group('name') %}
+
+      <tr class="first level tint">
+        <th scope="row"><a href="{{ url('settings/globals/' ~ values[0].id) }}">{{ globalName|t }}</a>  <span class="items-num">{{ values|length }} {{ 'field(s)'|t }}</span> </th>
+        <td>{{ 'Global Set'|t }}</td>
+        <td class="code"><strong>{{ values[0].handle }}</strong></td>
+        <td> </td>
+      </tr>
+
+      {% for field in values %}
+        <tr class="compact fields second level">
+            <td class="name"><a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a></td>
+            <td>{{ field.fType }}</td>
+            <td class="code">{{ field.fHandle }}</td>
+            <td class="code">{{ values[0].handle }}.{{ field.fHandle }}</td>
+        </tr>
+      {% endfor %}
+
+    {% endfor %}
+
+    </tbody>
+  </table>
+</section>
+
+
+<section id="assetsources">
+  <h2>{{ 'Asset Sources'|t }}</h2>
+  {{ macros.table3col(bp.assetsources, 'settings/assets/sources/') }}
+</section>
+
+<section id="assettransforms">
+
+  <h2>{{ 'Asset Transforms'|t }}</h2>
+
+  <table id="sets" class="data fullwidth collapsible">
+    <thead>
+      <th scope="col" width="25%">{{ "Name"|t }}</th>
+      <th scope="col" width="10%">{{ "Type"|t }}</th>
+      <th scope="col" width="10%">{{ "W × H"|t }}</th>
+      <th scope="col" width="15%">{{ "Position"|t }}</th>
+
+      <th scope="col" width="40%">{{ "Handle"|t }}</th>
+    </thead>
+
+    <tbody>
+
+    {% for transform in bp.assettransforms %}
+
+      <tr class="first level compact">
+          <th class="name"><a href="{{ url('settings/assets/transforms/' ~ transform.handle) }}">{{ transform.name }}</a></th>
+          <td>{{ transform.mode }}</td>
+          <td>{{ transform.width }} × {{ transform.height }}</td>
+          <td>{{ transform.position }}</td>
+          <td class="code">{{ transform.handle }}</td>
+      </tr>
+
+    {% endfor %}
+
+    </tbody>
+  </table>
+</section>
+
+
+<section id="categorygroups">
+  <h2>{{ 'Category Groups'|t }}</h2>
+  {{ macros.table3col(bp.categorygroups, 'settings/categories/') }}
+</section>
+
+<section id="taggroups">
+  <h2>{{ 'Tag Groups'|t }}</h2>
+  {{ macros.table3col(bp.taggroups, 'settings/tags/') }}
+</section>
+
+
+</div>
+
+{% endset %}
+
+
+{% set myCss %}
+    .compact td, .compact th { padding-top:1px !important; padding-bottom:1px !important; font-size: 90% }
+    .tint th, .tint td { background-color: #fff;border-top: 1px solid gray !important;   }
+
+    .second.level .name { padding-left: 20px !important }
+    .third.level .name { padding-left: 40px !important }
+
+    .first.level a { color: #333f4d }
+
+    .blueprint section {padding-top: 20px; margin-bottom: 40px}
+    .blueprint h2 {text-transform:capitalize; font-size: 16px; color: #da5a47}
+
+    .bp-nav .hidden-target { text-decoration:line-through !important; color: gray !important}
+
+  .small-info {
+      font-size: 85%;
+      color: #222;
+      padding: 5px;
+      background:rgb(255,255,240);
+      margin:10px 0;
+    }
+
+    .items-num {
+      display: inline-block;
+      background-color: lightgray;
+      color: white;
+      border-radius: 10px;
+      padding: 0px 4px;
+      text-align:center;
+      font-size: 80%;
+      min-width: 10px;
+      font-weight: normal;
+    }
+{% endset %}
+{% includeCss myCss %}
+
+
+{% set js %}
+
+
+    $(".bp-nav a").click(function (e) {
+      // var target = '#' + $(this).data('key');
+      e.preventDefault();
+      var target = $(this).attr('href');
+      // SHIFT-CLICK scroll to target
+      if (e.shiftKey) {
+
+         $('body').animate({
+            scrollTop: $(target).offset().top
+        }, 300);
+
+        return;
+      }
+
+
+      if (target == '#all') {
+        $('.blueprint section').show();
+        $('.bp-nav a').removeClass('hidden-target');
+      }
+      else {
+
+        // TODO: ALT key is pressed - toggle others then selected
+
+        $(target).fadeToggle('fast');
+        $(this).toggleClass('hidden-target');
+
+        // change "all" too
+        if ($(".bp-nav li:gt(1) a.hidden-target").length) {
+          $('.bp-showall').addClass('hidden-target');
+        }
+        else {
+          $('.bp-showall').removeClass('hidden-target');
+        }
+      }
+
+    });
+
+    $('#bp-search').on('input', function() {
+        filterTables($(this).val());
+    });
+
+    // TODO: make it smarter, display structured data?
+    function filterTables(find) {
+      $('.blueprint tr').each(function() {
+        if ( $(this).text().indexOf(find) == -1 ) {
+          $(this).hide();
+        }
+        else {
+          $(this).show();
+        }
+      });
+    }
+
+{% endset %}
+{% includeJs js %}
