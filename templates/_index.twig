@@ -277,7 +277,20 @@
 
 {% set js %}
 
+    $(function() {
 
+    // INIT from stored settings
+    var hidden = [];
+    try { hidden = JSON.parse(localStorage.getItem('bp.hidden'));} catch(e) {}
+    $(".bp-nav a").each(function() {
+      var target = $(this).attr('href');
+      if ($.inArray(target, hidden) > -1) {
+        $(this).addClass('hidden-target');
+        if (target !='#all') { $(target).hide(); }
+      }
+    });
+
+    // SHOW section, respond to click
     $(".bp-nav a").click(function (e) {
       // var target = '#' + $(this).data('key');
       e.preventDefault();
@@ -291,7 +304,6 @@
 
         return;
       }
-
 
       if (target == '#all') {
         $('.blueprint section').show();
@@ -313,8 +325,15 @@
         }
       }
 
+      // save current settings to localstorage
+      var hidden = $('.bp-nav a.hidden-target').map( function (val,i) {
+        return $(this).attr('href');
+      }).get(); // use .get() to get array not $ objects
+      try { localStorage.setItem('bp.hidden', JSON.stringify(hidden)); } catch (e) {}
+
     });
 
+    // SEARCH field changed
     $('#bp-search').on('input', function() {
         filterTables($(this).val());
     });
@@ -330,6 +349,8 @@
         }
       });
     }
+
+  });
 
 {% endset %}
 {% includeJs js %}

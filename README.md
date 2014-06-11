@@ -16,14 +16,16 @@ To install Blueprint:
 ## TODO
 
 * Show matrix elements
-* Save current filter settings to local storage
 * Better search/filter, show structure (show section/entrytype/... if field name is found)
 * Show all sections/globals/assets/... where field is used
-* Use Alt-click in show list to show only clicked section 
+* Use Alt-click in show list to show only clicked section
 * Remove from CP main menu?
 
 
 ## Changelog
+
+### 0.2
+* Save current filter settings to local storage
 
 ### 0.1
 
