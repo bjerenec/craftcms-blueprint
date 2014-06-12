@@ -25,7 +25,7 @@
         </tr>
 
         {% for field in values %}
-          <tr class="compact fields second level">
+          <tr class="compact fields second level searchable">
               <td class="name"><a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a></td>
               <td>{{ field.fType }}</td>
               <td class="code">{{ field.fHandle }}</td>
@@ -48,21 +48,21 @@
 <nav class="bp-nav">
   <ul data-level="1">
     <li class="heading"><span>{{ 'Show'|t }}</span></li>
-    <li><a href="#all" class="bp-showall">{{ 'All'|t }}</a></li>
-    <li><a href="#sections-structure">{{ 'Structures'|t }}</a></li>
-    <li><a href="#sections-channel">{{ 'Channels'|t }}</a></li>
-    <li><a href="#sections-single">{{ 'Singles'|t }}</a></li>
-    <li><a href="#globalsets">{{ 'Global Sets'|t }}</a></li>
-    <li><a href="#assetsources">{{ 'Asset Sources'|t }}</a></li>
-    <li><a href="#assettransforms">{{ 'Asset Transforms'|t }}</a></li>
-    <li><a href="#categorygroups">{{ 'Category Groups'|t }}</a></li>
-    <li><a href="#taggroups">{{ 'Tag Groups'|t }}</a></li>
+    <li><a href="#all" class="bp-showall"><span class="checkmark"><span class="mark"></span></span>{{ 'All'|t }}</a></li>
+    <li><a href="#sections-structure"><span class="checkmark"><span class="mark"></span></span>{{ 'Structures'|t }}</a></li>
+    <li><a href="#sections-channel"><span class="checkmark"><span class="mark"></span></span>{{ 'Channels'|t }}</a></li>
+    <li><a href="#sections-single"><span class="checkmark"><span class="mark"></span></span>{{ 'Singles'|t }}</a></li>
+    <li><a href="#globalsets"><span class="checkmark"><span class="mark"></span></span>{{ 'Global Sets'|t }}</a></li>
+    <li><a href="#assetsources"><span class="checkmark"><span class="mark"></span></span>{{ 'Asset Sources'|t }}</a></li>
+    <li><a href="#assettransforms"><span class="checkmark"><span class="mark"></span></span>{{ 'Asset Transforms'|t }}</a></li>
+    <li><a href="#categorygroups"><span class="checkmark"><span class="mark"></span></span>{{ 'Category Groups'|t }}</a></li>
+    <li><a href="#taggroups"><span class="checkmark"><span class="mark"></span></span>{{ 'Tag Groups'|t }}</a></li>
   </ul>
 </nav>
 
 <div class="small-info">
-  Shift-Click: scroll to target<br>
-  Alt-Click: toggle others (TODO)
+  Shift-Click: scroll to section<br>
+  Alt-Click: show this/hide others
 </div>
 
 {% endset %}
@@ -72,13 +72,13 @@
 
 <div class="blueprint" id="all">
 
-  <section id="sections">
+  <div id="sections">
 
       {% for sectionType, sections in bp.sections | group('type') %}
 
       <section id="sections-{{ sectionType }}">
 
-      <h2>{{ 'Sections'|t }} / {{ sectionType }}s</h2>
+      <h2>{{ 'Sections'|t }} / {{ sectionType }}s <span class="number"></span></h2>
 
 
       <table id="sets" class="data fullwidth collapsible">
@@ -111,7 +111,7 @@
 
             {% for field in sectionsByEntryType %}
 
-              <tr class="compact fields third level">
+              <tr class="compact fields third level searchable">
                   <td class="name">
                     <a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a>
                   </td>
@@ -141,13 +141,13 @@
 
     {% endfor %}
 
-</section>
+</div>
 
 
 
 <section id="globalsets">
 
-  <h2>{{ 'Global Sets'|t }}</h2>
+  <h2>{{ 'Global Sets'|t }} <span class="number"></span></h2>
 
   <table id="sets" class="data fullwidth collapsible">
     <thead>
@@ -169,7 +169,7 @@
       </tr>
 
       {% for field in values %}
-        <tr class="compact fields second level">
+        <tr class="compact fields second level searchable">
             <td class="name"><a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a></td>
             <td>{{ field.fType }}</td>
             <td class="code">{{ field.fHandle }}</td>
@@ -185,13 +185,13 @@
 
 
 <section id="assetsources">
-  <h2>{{ 'Asset Sources'|t }}</h2>
+  <h2>{{ 'Asset Sources'|t }} <span class="number"></span></h2>
   {{ macros.table3col(bp.assetsources, 'settings/assets/sources/') }}
 </section>
 
 <section id="assettransforms">
 
-  <h2>{{ 'Asset Transforms'|t }}</h2>
+  <h2>{{ 'Asset Transforms'|t }} <span class="number"></span></h2>
 
   <table id="sets" class="data fullwidth collapsible">
     <thead>
@@ -223,12 +223,12 @@
 
 
 <section id="categorygroups">
-  <h2>{{ 'Category Groups'|t }}</h2>
+  <h2>{{ 'Category Groups'|t }} <span class="number"></span></h2>
   {{ macros.table3col(bp.categorygroups, 'settings/categories/') }}
 </section>
 
 <section id="taggroups">
-  <h2>{{ 'Tag Groups'|t }}</h2>
+  <h2>{{ 'Tag Groups'|t }} <span class="number"></span></h2>
   {{ macros.table3col(bp.taggroups, 'settings/tags/') }}
 </section>
 
@@ -242,6 +242,7 @@
     .compact td, .compact th { padding-top:1px !important; padding-bottom:1px !important; font-size: 90% }
     .tint th, .tint td { background-color: #fff;border-top: 1px solid gray !important;   }
 
+
     .second.level .name { padding-left: 20px !important }
     .third.level .name { padding-left: 40px !important }
 
@@ -249,14 +250,15 @@
 
     .blueprint section {padding-top: 20px; margin-bottom: 40px}
     .blueprint h2 {text-transform:capitalize; font-size: 16px; color: #da5a47}
+    .blueprint .found td, .blueprint .found th { background-color: #ff8 }
 
-    .bp-nav .hidden-target { text-decoration:line-through !important; color: gray !important}
+    .bp-nav .hidden-target { color: gray !important}
 
-  .small-info {
+    .small-info {
       font-size: 85%;
       color: #222;
       padding: 5px;
-      background:rgb(255,255,240);
+      background:rgb(255,255,200);
       margin:10px 0;
     }
 
@@ -270,6 +272,40 @@
       font-size: 80%;
       min-width: 10px;
       font-weight: normal;
+    }
+
+    .bp-nav .checkmark {
+      display:block;
+      float:left;
+      width: 15px;
+      margin-right:5px;
+      background-color: #eee;
+      background-colorx: rgb(0, 176, 7);
+
+      border-radius: 10px;
+      height: 10px;
+      padding: 1px;
+      border: 1px solid #ddd;
+
+      box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 2px inset;
+    }
+
+    .bp-nav .mark {
+      display:block;
+      width: 10px;
+      margin-right:5px;
+      background-color:rgb(0, 176, 7);
+      border-radius: 10px;
+      height: 10px;
+      margin-left:5px;
+
+      -webkit-transition: all 0.05s;
+      transition: all 0.05s;
+    }
+
+    .bp-nav .hidden-target .mark {
+        margin-left:0;
+        background-color: #aaa;
     }
 {% endset %}
 {% includeCss myCss %}
@@ -311,17 +347,24 @@
       }
       else {
 
-        // TODO: ALT key is pressed - toggle others then selected
-
-        $(target).fadeToggle('fast');
-        $(this).toggleClass('hidden-target');
-
-        // change "all" too
-        if ($(".bp-nav li:gt(1) a.hidden-target").length) {
-          $('.bp-showall').addClass('hidden-target');
+        // ALT key is pressed - show this, hide others
+        if (e.altKey) {
+          $('.blueprint section').fadeOut('fast');
+          $(target).fadeIn('fast');
+          $('.bp-nav a').addClass('hidden-target');
+          $(this).removeClass('hidden-target');
         }
         else {
-          $('.bp-showall').removeClass('hidden-target');
+          $(target).fadeToggle('fast');
+          $(this).toggleClass('hidden-target');
+
+          // change "all" too
+          if ($(".bp-nav li:gt(1) a.hidden-target").length) {
+            $('.bp-showall').addClass('hidden-target');
+          }
+          else {
+            $('.bp-showall').removeClass('hidden-target');
+          }
         }
       }
 
@@ -340,14 +383,40 @@
 
     // TODO: make it smarter, display structured data?
     function filterTables(find) {
+
+      if (!find.length) {
+        $('.blueprint tr, .blueprint table').removeClass('found').show();
+        $('.blueprint .number').text('');
+        return;
+      }
+
       $('.blueprint tr').each(function() {
-        if ( $(this).text().indexOf(find) == -1 ) {
+        if ( $(this).text().toLowerCase().indexOf(find.toLowerCase()) == -1 ) {
+          if ($(this).hasClass('searchable')) {
+            $(this).hide();
+          }
+          $(this).removeClass('found');
+        }
+        else {
+          $(this).show();
+          $(this).addClass('found');
+        }
+      });
+
+
+      $('.blueprint table').each(function() {
+        var numberOfFound = $(this).find('.found').length;
+        if (!numberOfFound ) {
           $(this).hide();
         }
         else {
           $(this).show();
         }
+
+        $(this).parent().find('h2 .number').text('('+numberOfFound+')');
+
       });
+
     }
 
   });
