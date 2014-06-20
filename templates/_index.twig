@@ -20,7 +20,8 @@
         {% set first = values[0] %}
         <tr class="first level tint">
           <th scope="row" width="25%"><a href="{{ url(url ~ first.id) }}">{{ key|t }}</a> <span class="items-num">{{ values|length }} {{ 'field(s)'|t }}</span></th>
-          <td width="35%">{% if first.type is defined %}{{ first.type }}{% endif %}</td>
+          <td width="35%">
+            {% if first.type is defined %}{{ first.type }}{% endif %}</td>
           <td width="40%">{% if first.handle is defined %}{{ first.handle }}{% endif %}</td>
         </tr>
 
@@ -53,6 +54,7 @@
     <li><a href="#sections-channel"><span class="checkmark"><span class="mark"></span></span>{{ 'Channels'|t }}</a></li>
     <li><a href="#sections-single"><span class="checkmark"><span class="mark"></span></span>{{ 'Singles'|t }}</a></li>
     <li><a href="#globalsets"><span class="checkmark"><span class="mark"></span></span>{{ 'Global Sets'|t }}</a></li>
+    <li><a href="#matrixfields"><span class="checkmark"><span class="mark"></span></span>{{ 'Matrix Fields'|t }}</a></li>
     <li><a href="#assetsources"><span class="checkmark"><span class="mark"></span></span>{{ 'Asset Sources'|t }}</a></li>
     <li><a href="#assettransforms"><span class="checkmark"><span class="mark"></span></span>{{ 'Asset Transforms'|t }}</a></li>
     <li><a href="#categorygroups"><span class="checkmark"><span class="mark"></span></span>{{ 'Category Groups'|t }}</a></li>
@@ -81,7 +83,7 @@
       <h2>{{ 'Sections'|t }} / {{ sectionType }}s <span class="number"></span></h2>
 
 
-      <table id="sets" class="data fullwidth collapsible">
+      <table class="data fullwidth collapsible">
         <thead>
           <th scope="col" width="25%">{{ "Name"|t }}</th>
           <th scope="col" width="15%">{{ "Type"|t }}</th>
@@ -95,7 +97,7 @@
 
         <tr class="first level tint">
           <th scope="row"><a href="{{ url('settings/sections/' ~ sectionsByName[0].id) }}">{{ sectionName }}</a></th>
-          <td>{{ sectionType }}</td>
+          <td class="capitalize">{{ sectionType }}</td>
           <td class="code">{{ sectionsByName[0].handle }}</td>
           <td> </td>
         </tr>
@@ -104,7 +106,7 @@
 
             <tr class="second level compact">
               <td class="name"><strong><a href="{{ url('settings/sections/' ~ sectionsByName[0].id ~ '/entrytypes/' ~ sectionsByEntryType[0].etId) }}">{{ sectionEntryType }}</a></strong> <span class="items-num">{{ sectionsByEntryType|length }} {{ 'field(s)'|t }}</span></td>
-              <td>{{ 'Entry Type'|t }}</td>
+              <td>{{ 'EntryType'|t }}</td>
               <td class="code">{{ sectionsByEntryType[0].etHandle }}</td>
               <td> </td>
             </tr>
@@ -117,7 +119,8 @@
                   </td>
 
                   <td>
-                    {{ field.fType }}
+                    {{ field.fType }} {% if field.fType == 'Matrix' %} <a href="#mf{{ field.fId }}">&#8594;</a>{% endif %}
+
                   </td>
 
                   <td class="code">
@@ -149,7 +152,7 @@
 
   <h2>{{ 'Global Sets'|t }} <span class="number"></span></h2>
 
-  <table id="sets" class="data fullwidth collapsible">
+  <table class="data fullwidth collapsible">
     <thead>
       <th scope="col" width="25%">{{ "Name"|t }}</th>
       <th scope="col" width="15%">{{ "Type"|t }}</th>
@@ -163,7 +166,7 @@
 
       <tr class="first level tint">
         <th scope="row"><a href="{{ url('settings/globals/' ~ values[0].id) }}">{{ globalName|t }}</a>  <span class="items-num">{{ values|length }} {{ 'field(s)'|t }}</span> </th>
-        <td>{{ 'Global Set'|t }}</td>
+        <td>{{ 'GlobalSet'|t }}</td>
         <td class="code"><strong>{{ values[0].handle }}</strong></td>
         <td> </td>
       </tr>
@@ -171,7 +174,7 @@
       {% for field in values %}
         <tr class="compact fields second level searchable">
             <td class="name"><a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a></td>
-            <td>{{ field.fType }}</td>
+            <td class="capitalize">{{ field.fType }}</td>
             <td class="code">{{ field.fHandle }}</td>
             <td class="code">{{ values[0].handle }}.{{ field.fHandle }}</td>
         </tr>
@@ -183,6 +186,65 @@
   </table>
 </section>
 
+<section id="matrixfields">
+
+<h2>{{ 'Matrix Fields'|t }} <span class="number"></span></h2>
+
+<table class="data fullwidth collapsible">
+  <thead>
+    <th scope="col" width="25%">{{ "Name"|t }}</th>
+    <th scope="col" width="35%">{{ "Type"|t }}</th>
+    <th scope="col" width="40%">{{ "Handle"|t }}</th>
+  </thead>
+
+  <tbody>
+
+  {% for mfName, mfsByParent in bp.matrixfields | group('parentName') %}
+
+  <tr class="first level tint">
+    <th scope="row" id="mf{{ mfsByParent[0].parentId}}"><a href="{{ url('settings/fields/edit/' ~ mfsByParent[0].parentId) }}">{{ mfName }}</a></th>
+    <td>{{ 'Matrix' }}</td>
+    <td class="code">{{ mfsByParent[0].parentHandle }}</td>
+  </tr>
+
+    {% for mfEntryType, mfsByEntryType in mfsByParent | group('name') %}
+
+      <tr class="second level compact">
+        <td class="name"><strong>{{ mfEntryType }}</strong> <span class="items-num">{{ mfsByEntryType|length }} {{ 'field(s)'|t }}</span></td>
+        <td>{{ 'MatrixBlockType'|t }}</td>
+        <td class="code">{{ mfsByEntryType[0].handle }}</td>
+      </tr>
+
+
+      {% for field in mfsByEntryType %}
+
+        <tr class="compact fields third level searchable">
+            <td class="name">
+              {{ field.fName }}
+            </td>
+
+            <td>
+              {{ field.fType }}
+            </td>
+
+            <td class="code">
+              {{ field.fHandle }}
+            </td>
+
+          </tr>
+
+      {% endfor %}
+
+
+    {% endfor %}
+
+  {% endfor %}
+
+</tbody>
+</table>
+</section>
+
+
 
 <section id="assetsources">
   <h2>{{ 'Asset Sources'|t }} <span class="number"></span></h2>
@@ -193,7 +255,7 @@
 
   <h2>{{ 'Asset Transforms'|t }} <span class="number"></span></h2>
 
-  <table id="sets" class="data fullwidth collapsible">
+  <table class="data fullwidth collapsible">
     <thead>
       <th scope="col" width="25%">{{ "Name"|t }}</th>
       <th scope="col" width="10%">{{ "Type"|t }}</th>
@@ -251,8 +313,7 @@
     .blueprint section {padding-top: 20px; margin-bottom: 40px}
     .blueprint h2 {text-transform:capitalize; font-size: 16px; color: #da5a47}
     .blueprint .found td, .blueprint .found th { background-color: #ff8 }
-
-    .bp-nav .hidden-target { color: gray !important}
+    .blueprint .capitalize {text-transform:capitalize}
 
     .small-info {
       font-size: 85%;
@@ -273,6 +334,9 @@
       min-width: 10px;
       font-weight: normal;
     }
+
+
+    .bp-nav .hidden-target { color: gray !important}
 
     .bp-nav .checkmark {
       display:block;

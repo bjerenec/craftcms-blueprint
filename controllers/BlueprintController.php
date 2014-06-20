@@ -16,6 +16,8 @@ class BlueprintController extends BaseController
         $variables['bp']['assettransforms'] = $this->_getAssetTransforms();
         $variables['bp']['categorygroups'] = $this->_getCategoryGroupsAndRelatedFields();
         $variables['bp']['taggroups'] = $this->_getTagGroupsAndRelatedFields();
+        $variables['bp']['matrixfields'] = $this->_getMatrixFieldsAndRelatedFields();
+
 
         $this->renderTemplate('blueprint/_index', $variables);
     }
@@ -33,6 +35,21 @@ class BlueprintController extends BaseController
             ->queryAll();
 
       return $sections;
+    }
+
+    private function _getMatrixFieldsAndRelatedFields()
+    {
+      $mfs = craft()->db->createCommand()
+            ->select('m.handle, m.name, m.id, pf.id parentId, pf.name parentName, pf.handle parentHandle, f.id fId, f.name fName, f.handle fHandle, f.type fType')
+            ->from('matrixblocktypes m')
+            ->join('fields pf', 'm.fieldId=pf.id')
+            ->join('fieldlayouts fl', 'm.fieldLayoutId=fl.id')
+            ->join('fieldlayoutfields flf', 'fl.id=flf.layoutId')
+            ->join('fields f', 'flf.fieldId=f.id')
+            ->order('m.name, fName')
+            ->queryAll();
+
+      return $mfs;
     }
 
 
