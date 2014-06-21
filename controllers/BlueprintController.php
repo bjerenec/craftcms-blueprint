@@ -25,7 +25,7 @@ class BlueprintController extends BaseController
     private function _getSectionsAndRelatedFields()
     {
       $sections = craft()->db->createCommand()
-            ->select('s.handle, s.name, s.id, s.type, s.template, et.name etName, et.handle etHandle, et.id etId, f.id fId, f.name fName, f.handle fHandle, f.type fType')
+            ->select('s.handle, s.name, s.id, s.type, s.template, et.name etName, et.handle etHandle, et.id etId, f.id fId, f.name fName, f.handle fHandle, f.type fType, f.translatable fTranslatable')
             ->from('sections s')
             ->join('entrytypes et', 'et.sectionId=s.id')
             ->join('fieldlayouts fl', 'et.fieldLayoutId=fl.id')
@@ -40,7 +40,7 @@ class BlueprintController extends BaseController
     private function _getMatrixFieldsAndRelatedFields()
     {
       $mfs = craft()->db->createCommand()
-            ->select('m.handle, m.name, m.id, pf.id parentId, pf.name parentName, pf.handle parentHandle, f.id fId, f.name fName, f.handle fHandle, f.type fType')
+            ->select('m.handle, m.name, m.id, pf.id parentId, pf.name parentName, pf.handle parentHandle, f.id fId, f.name fName, f.handle fHandle, f.type fType, f.translatable fTranslatable')
             ->from('matrixblocktypes m')
             ->join('fields pf', 'm.fieldId=pf.id')
             ->join('fieldlayouts fl', 'm.fieldLayoutId=fl.id')
@@ -86,7 +86,7 @@ class BlueprintController extends BaseController
     private function __getSourceAndRelatedFields($sourceName, $sourceFields = 's.name, s.id, s.handle')
     {
       $sources = craft()->db->createCommand()
-            ->select($sourceFields . ', f.id fId, f.name fName, f.handle fHandle, f.type fType')
+            ->select($sourceFields . ', f.id fId, f.name fName, f.handle fHandle, f.type fType, f.translatable fTranslatable')
             ->from("$sourceName s")
             ->join('fieldlayouts fl', 's.fieldLayoutId=fl.id')
             ->join('fieldlayoutfields flf', 'fl.id=flf.layoutId')

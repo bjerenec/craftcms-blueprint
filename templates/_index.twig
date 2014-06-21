@@ -7,18 +7,19 @@
 {% macro table3col(data, url) %}
 
     <table class="data fullwidth collapsible">
-      <thead>
+      <thead><tr class="head">
         <th scope="col">{{ "Name"|t }}</th>
         <th scope="col">{{ "Type"|t }}</th>
         <th scope="col">{{ "Handle"|t }}</th>
-      </thead>
+      </tr></thead>
 
 
       <tbody>
 
       {% for key, values in data | group('name') %}
+        {% set l0 = 'l0-' ~ loop.index %}
         {% set first = values[0] %}
-        <tr class="first level tint">
+        <tr class="level0 tint {{ l0 }}">
           <th scope="row" width="25%"><a href="{{ url(url ~ first.id) }}">{{ key|t }}</a> <span class="items-num">{{ values|length }} {{ 'field(s)'|t }}</span></th>
           <td width="35%">
             {% if first.type is defined %}{{ first.type }}{% endif %}</td>
@@ -26,10 +27,10 @@
         </tr>
 
         {% for field in values %}
-          <tr class="compact fields second level searchable">
-              <td class="name"><a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a></td>
+          <tr class="level1 compact fields" data-l0="{{ l0 }}">
+              <td class="name"><a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a> {% if field.fTranslatable %}<span class="translatable" title="{{ 'Translatable'|t }}">T</span> {% endif %}</td>
               <td>{{ field.fType }}</td>
-              <td class="code">{{ field.fHandle }}</td>
+              <td class="code handle">{{ field.fHandle }} <a href="#" class="find-field">&#8594;</a></td>
           </tr>
         {% endfor %}
       {% endfor %}
@@ -84,18 +85,19 @@
 
 
       <table class="data fullwidth collapsible">
-        <thead>
+        <thead><tr class="head">
           <th scope="col" width="25%">{{ "Name"|t }}</th>
           <th scope="col" width="15%">{{ "Type"|t }}</th>
           <th scope="col" width="20%">{{ "Handle"|t }}</th>
           <th scope="col" width="40%">{{ "Twig Variable"|t }}</th>
-        </thead>
+        </tr></thead>
 
         <tbody>
 
         {% for sectionName, sectionsByName in sections | group('name') %}
 
-        <tr class="first level tint">
+        {% set l0 = 'l0-' ~ loop.index %}
+        <tr class="level0 tint {{ l0 }}" data-l0="{{ l0 }}">
           <th scope="row"><a href="{{ url('settings/sections/' ~ sectionsByName[0].id) }}">{{ sectionName }}</a></th>
           <td class="capitalize">{{ sectionType }}</td>
           <td class="code">{{ sectionsByName[0].handle }}</td>
@@ -103,8 +105,9 @@
         </tr>
 
           {% for sectionEntryType, sectionsByEntryType in sectionsByName | group('etName') %}
+            {% set l1 = l0 ~ '-l1-' ~ loop.index %}
 
-            <tr class="second level compact">
+            <tr class="level1 compact {{ l1 }}" data-l0="{{ l0 }}">
               <td class="name"><strong><a href="{{ url('settings/sections/' ~ sectionsByName[0].id ~ '/entrytypes/' ~ sectionsByEntryType[0].etId) }}">{{ sectionEntryType }}</a></strong> <span class="items-num">{{ sectionsByEntryType|length }} {{ 'field(s)'|t }}</span></td>
               <td>{{ 'EntryType'|t }}</td>
               <td class="code">{{ sectionsByEntryType[0].etHandle }}</td>
@@ -113,9 +116,9 @@
 
             {% for field in sectionsByEntryType %}
 
-              <tr class="compact fields third level searchable">
+              <tr class="level2 compact fields" data-l0="{{ l0 }}" data-l1="{{ l1 }}">
                   <td class="name">
-                    <a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a>
+                    <a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a> {% if field.fTranslatable %}<span class="translatable" title="{{ 'Translatable'|t }}">T</span> {% endif %}
                   </td>
 
                   <td>
@@ -123,8 +126,8 @@
 
                   </td>
 
-                  <td class="code">
-                    {{ field.fHandle }}
+                  <td class="code handle">
+                    {{ field.fHandle }} <a href="#" class="find-field">&#8594;</a>
                   </td>
 
                   <td class="code">
@@ -153,18 +156,19 @@
   <h2>{{ 'Global Sets'|t }} <span class="number"></span></h2>
 
   <table class="data fullwidth collapsible">
-    <thead>
+    <thead><tr class="head">
       <th scope="col" width="25%">{{ "Name"|t }}</th>
       <th scope="col" width="15%">{{ "Type"|t }}</th>
       <th scope="col" width="20%">{{ "Handle"|t }}</th>
       <th scope="col" width="40%">{{ "Twig Variable"|t }}</th>
-    </thead>
+    </tr></thead>
 
     <tbody>
 
     {% for globalName, values in bp.globals | group('name') %}
 
-      <tr class="first level tint">
+      {% set l0 = 'l0-' ~ loop.index %}
+      <tr class="parent level0 tint {{ l0 }}">
         <th scope="row"><a href="{{ url('settings/globals/' ~ values[0].id) }}">{{ globalName|t }}</a>  <span class="items-num">{{ values|length }} {{ 'field(s)'|t }}</span> </th>
         <td>{{ 'GlobalSet'|t }}</td>
         <td class="code"><strong>{{ values[0].handle }}</strong></td>
@@ -172,11 +176,11 @@
       </tr>
 
       {% for field in values %}
-        <tr class="compact fields second level searchable">
-            <td class="name"><a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a></td>
+        <tr class="child compact fields level1" data-l0="{{ l0 }}">
+            <td class="name"><a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a> {% if field.fTranslatable %}<span class="translatable" title="{{ 'Translatable'|t }}">T</span> {% endif %}</td>
             <td class="capitalize">{{ field.fType }}</td>
-            <td class="code">{{ field.fHandle }}</td>
-            <td class="code">{{ values[0].handle }}.{{ field.fHandle }}</td>
+            <td class="code">{{ field.fHandle }} <a href="#" class="find-field">&#8594;</a></td>
+            <td class="code handle">{{ values[0].handle }}.{{ field.fHandle }}</td>
         </tr>
       {% endfor %}
 
@@ -191,17 +195,19 @@
 <h2>{{ 'Matrix Fields'|t }} <span class="number"></span></h2>
 
 <table class="data fullwidth collapsible">
-  <thead>
+  <thead><tr class="head">
     <th scope="col" width="25%">{{ "Name"|t }}</th>
     <th scope="col" width="35%">{{ "Type"|t }}</th>
     <th scope="col" width="40%">{{ "Handle"|t }}</th>
-  </thead>
+  </tr></thead>
 
   <tbody>
 
   {% for mfName, mfsByParent in bp.matrixfields | group('parentName') %}
 
-  <tr class="first level tint">
+  {% set l0 = 'l0-' ~ loop.index %}
+
+  <tr class="level0 tint {{ l0 }}">
     <th scope="row" id="mf{{ mfsByParent[0].parentId}}"><a href="{{ url('settings/fields/edit/' ~ mfsByParent[0].parentId) }}">{{ mfName }}</a></th>
     <td>{{ 'Matrix' }}</td>
     <td class="code">{{ mfsByParent[0].parentHandle }}</td>
@@ -209,7 +215,9 @@
 
     {% for mfEntryType, mfsByEntryType in mfsByParent | group('name') %}
 
-      <tr class="second level compact">
+      {% set l1 = l0 ~ '-l1-' ~ loop.index %}
+
+      <tr class="level1 compact {{ l1 }}" data-l0="{{ l0 }}">
         <td class="name"><strong>{{ mfEntryType }}</strong> <span class="items-num">{{ mfsByEntryType|length }} {{ 'field(s)'|t }}</span></td>
         <td>{{ 'MatrixBlockType'|t }}</td>
         <td class="code">{{ mfsByEntryType[0].handle }}</td>
@@ -218,17 +226,17 @@
 
       {% for field in mfsByEntryType %}
 
-        <tr class="compact fields third level searchable">
+        <tr class="compact fields level2" data-l0="{{ l0 }}" data-l1="{{ l1 }}">
             <td class="name">
-              {{ field.fName }}
+              {{ field.fName }} {% if field.fTranslatable %}<span class="translatable" title="{{ 'Translatable'|t }}">T</span> {% endif %}
             </td>
 
             <td>
               {{ field.fType }}
             </td>
 
-            <td class="code">
-              {{ field.fHandle }}
+            <td class="code handle">
+              {{ field.fHandle }} <a href="#" class="find-field">&#8594;</a>
             </td>
 
           </tr>
@@ -256,22 +264,22 @@
   <h2>{{ 'Asset Transforms'|t }} <span class="number"></span></h2>
 
   <table class="data fullwidth collapsible">
-    <thead>
+    <thead><tr class="head">
       <th scope="col" width="25%">{{ "Name"|t }}</th>
       <th scope="col" width="10%">{{ "Type"|t }}</th>
       <th scope="col" width="10%">{{ "W × H"|t }}</th>
       <th scope="col" width="15%">{{ "Position"|t }}</th>
 
       <th scope="col" width="40%">{{ "Handle"|t }}</th>
-    </thead>
+    </tr></thead>
 
     <tbody>
 
     {% for transform in bp.assettransforms %}
 
-      <tr class="first level compact">
+      <tr class="level0 compact">
           <th class="name"><a href="{{ url('settings/assets/transforms/' ~ transform.handle) }}">{{ transform.name }}</a></th>
-          <td>{{ transform.mode }}</td>
+          <td class="capitalize">{{ transform.mode }}</td>
           <td>{{ transform.width }} × {{ transform.height }}</td>
           <td>{{ transform.position }}</td>
           <td class="code">{{ transform.handle }}</td>
@@ -301,29 +309,28 @@
 
 
 {% set myCss %}
-    .compact td, .compact th { padding-top:1px !important; padding-bottom:1px !important; font-size: 90% }
-    .tint th, .tint td { background-color: #fff;border-top: 1px solid gray !important;   }
+    .blueprint .compact td, .blueprint .compact th { padding-top:1px !important; padding-bottom:1px !important; font-size: 90% }
+    .blueprint .tint th, .blueprint .tint td { background-color: #fff;border-top: 1px solid gray !important;   }
 
+    .blueprint .level0 a { color: #333f4d }
+    .blueprint .level1 .name { padding-left: 20px !important }
+    .blueprint .level2 .name { padding-left: 40px !important }
 
-    .second.level .name { padding-left: 20px !important }
-    .third.level .name { padding-left: 40px !important }
-
-    .first.level a { color: #333f4d }
-
-    .blueprint section {padding-top: 20px; margin-bottom: 40px}
-    .blueprint h2 {text-transform:capitalize; font-size: 16px; color: #da5a47}
-    .blueprint .found td, .blueprint .found th { background-color: #ff8 }
+    .blueprint section {padding-top: 10px; margin-bottom: 0px; border-bottom: 2px solid lightgray}
+    .blueprint h2 {text-transform:capitalize; font-size: 16px; color: #da5a47; margin-bottom:10px;}
+    .blueprint .found td, .blueprint .found th { background-color: #ffa }
     .blueprint .capitalize {text-transform:capitalize}
+    .blueprint table {margin-bottom: 30px;}
 
     .small-info {
       font-size: 85%;
       color: #222;
       padding: 5px;
-      background:rgb(255,255,200);
+      background:#ffa;
       margin:10px 0;
     }
 
-    .items-num {
+    .blueprint .items-num {
       display: inline-block;
       background-color: lightgray;
       color: white;
@@ -333,6 +340,17 @@
       font-size: 80%;
       min-width: 10px;
       font-weight: normal;
+    }
+
+    .blueprint .translatable {
+      background-color: gray;
+      color: white;
+      border-radius: 4px;
+      padding: 1px 4px;
+      text-align:center;
+      font-size: 70%;
+      min-width: 10px;
+      font-weight: bold;
     }
 
 
@@ -445,7 +463,18 @@
         filterTables($(this).val());
     });
 
-    // TODO: make it smarter, display structured data?
+    $('a.find-field').click(function (e) {
+      e.preventDefault();
+      var find = 'h:' + $(this).parent().text().replace($(this).text(),'').trim();
+      $('#bp-search').val(find);
+      filterTables(find);
+
+    });
+
+
+
+
+     // filter tables and try to show related parent rows
     function filterTables(find) {
 
       if (!find.length) {
@@ -454,11 +483,18 @@
         return;
       }
 
-      $('.blueprint tr').each(function() {
-        if ( $(this).text().toLowerCase().indexOf(find.toLowerCase()) == -1 ) {
-          if ($(this).hasClass('searchable')) {
-            $(this).hide();
-          }
+      var textToFind = find.toLowerCase();
+      var searchHandleOnly = false;
+      if (textToFind.indexOf('h:') == 0) {
+        textToFind = textToFind.substr(2);
+        searchHandleOnly = true;
+      }
+
+      $('.blueprint tr').not('.head').each(function() {
+
+        var searchableText = (searchHandleOnly) ? $(this).find('.handle').text().toLowerCase() : $(this).text().toLowerCase();
+        if ( searchableText.indexOf(textToFind) == -1 ) {
+          $(this).hide();
           $(this).removeClass('found');
         }
         else {
@@ -467,10 +503,10 @@
         }
       });
 
-
+      // hide/show whole tables
       $('.blueprint table').each(function() {
         var numberOfFound = $(this).find('.found').length;
-        if (!numberOfFound ) {
+        if (!numberOfFound) {
           $(this).hide();
         }
         else {
@@ -481,7 +517,24 @@
 
       });
 
+      // show parent table rows, if they exists
+      //var visible = $('.blueprint tr').filter(':visible');
+      var visible = $('.blueprint tr.found');
+      visible.each(function() {
+
+        if ($(this).data('l0')) {
+          var l0 = '.' + $(this).data('l0');
+          $(this).siblings(l0).show();
+        }
+
+        if ($(this).data('l1')) {
+          var l1 = '.' + $(this).data('l1');
+          $(this).siblings(l1).show();
+        }
+      });
+
     }
+
 
   });
 
