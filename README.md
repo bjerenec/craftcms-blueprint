@@ -15,10 +15,18 @@ To install Blueprint:
 
 ## TODO
 
+* Test
 * Remove from CP main menu?
 
 
 ## Changelog
+
+### 0.4
+
+* Display more information about Asset Sources (needs more testing, checked only local source type)
+* shiftKey/metaKey scrolling to target section fixed on Firefox
+* Added fix to show sections with no field layout (by marionnewlevant, thanks)
+
 
 ### 0.3
 

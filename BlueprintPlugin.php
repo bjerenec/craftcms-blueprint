@@ -10,7 +10,7 @@ class BlueprintPlugin extends BasePlugin
 
     function getVersion()
     {
-        return '0.2';
+        return '0.4';
     }
 
     function getDeveloper()
@@ -20,7 +20,7 @@ class BlueprintPlugin extends BasePlugin
 
     function getDeveloperUrl()
     {
-        return 'http://studiotandem.si';
+        return 'http://studiotandem.si/en';
     }
 
     public function hasCpSection()

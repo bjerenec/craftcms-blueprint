@@ -461,12 +461,13 @@
       // var target = '#' + $(this).data('key');
       e.preventDefault();
       var target = $(this).attr('href');
-      // SHIFT-CLICK scroll to target
-      if (e.shiftKey) {
 
-         $('body').animate({
+      // SHIFT-CLICK scroll to target
+      if (e.shiftKey || e.metaKey) {
+
+         $('html, body').animate({
             scrollTop: $(target).offset().top
-        }, 300);
+        }, 300); // called on two elements, but works in FF and webkit
 
         return;
       }
