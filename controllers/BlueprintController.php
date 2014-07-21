@@ -22,6 +22,7 @@ class BlueprintController extends BaseController
         $this->renderTemplate('blueprint/_index', $variables);
     }
 
+    /* fix by marionnewlevant - https://github.com/bjerenec/craftcms-blueprint/issues/1  */
     private function _getSectionsAndRelatedFields()
     {
       $sections = craft()->db->createCommand()
@@ -29,8 +30,8 @@ class BlueprintController extends BaseController
             ->from('sections s')
             ->join('entrytypes et', 'et.sectionId=s.id')
             ->join('fieldlayouts fl', 'et.fieldLayoutId=fl.id')
-            ->join('fieldlayoutfields flf', 'fl.id=flf.layoutId')
-            ->join('fields f', 'flf.fieldId=f.id')
+            ->leftJoin('fieldlayoutfields flf', 'fl.id=flf.layoutId')
+            ->leftJoin('fields f', 'flf.fieldId=f.id')
             ->order('s.name, etName, fName')
             ->queryAll();
 

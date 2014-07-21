@@ -114,7 +114,8 @@
               <td> </td>
             </tr>
 
-            {% for field in sectionsByEntryType %}
+            {# {% for field in sectionsByEntryType %} #}
+            {% for field in sectionsByEntryType if field.fId %}
 
               <tr class="level2 compact fields" data-l0="{{ l0 }}" data-l1="{{ l1 }}">
                   <td class="name">
