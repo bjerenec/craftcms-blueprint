@@ -61,7 +61,11 @@ class BlueprintController extends BaseController
 
     private function _getAssetSourcesAndRelatedFields()
     {
-      return $this->__getSourceAndRelatedFields('assetsources', 's.name, s.id, s.type');
+      $assets = $this->__getSourceAndRelatedFields('assetsources', 's.name, s.id, s.type, s.settings');
+      foreach ($assets as &$asset) {
+        $asset['decoded_settings'] = json_decode($asset['settings'], true); // as array
+      }
+      return $assets;
     }
 
     private function _getAssetTransforms()

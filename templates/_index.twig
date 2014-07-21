@@ -138,7 +138,6 @@
                 </tr>
 
             {% endfor %}
-
           {% endfor %}
         {% endfor %}
 
@@ -243,10 +242,7 @@
           </tr>
 
       {% endfor %}
-
-
     {% endfor %}
-
   {% endfor %}
 
 </tbody>
@@ -254,11 +250,53 @@
 </section>
 
 
-
 <section id="assetsources">
+
   <h2>{{ 'Asset Sources'|t }} <span class="number"></span></h2>
-  {{ macros.table3col(bp.assetsources, 'settings/assets/sources/') }}
+
+  <table class="data fullwidth collapsible">
+    <thead><tr class="head">
+      <th scope="col" width="25%">{{ "Name"|t }}</th>
+      <th scope="col" width="10%">{{ "Type"|t }}</th>
+      <th scope="col" width="25%">{{ "Settings"|t }}</th>
+
+      <th scope="col" width="40%">{{ "Handle"|t }}</th>
+    </tr></thead>
+
+    <tbody>
+
+
+    {% for key, values in bp.assetsources | group('name') %}
+      {% set l0 = 'l0-' ~ loop.index %}
+      {% set first = values[0] %}
+
+      <tr class="level0 tint {{ l0 }}">
+        <th scope="row" ><a href="{{ url('settings/assets/sources/' ~ first.id) }}">{{ key|t }}</a> <span class="items-num">{{ values|length }} {{ 'field(s)'|t }}</span></th>
+        <td>
+          {% if first.type is defined %}{{ first.type }}{% endif %}</td>
+        <td colspan="2" class="code">
+          {% for k, v in first.decoded_settings %}
+            <div><span class="key">{{ k }}:</span> {{ v}}</div>
+          {% endfor %}
+          </td>
+        {# <td>{% if first.handle is defined %}{{ first.handle }}{% endif %}</td> #}
+      </tr>
+
+      {% for field in values %}
+        <tr class="level1 compact fields" data-l0="{{ l0 }}">
+            <td class="name"><a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a> {% if field.fTranslatable %}<span class="translatable" title="{{ 'Translatable'|t }}">T</span> {% endif %}</td>
+            <td colspan="2">{{ field.fType }}</td>
+
+            <td class="code handle">{{ field.fHandle }} <a href="#" class="find-field">&#8594;</a></td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+
+
+    </tbody>
+  </table>
 </section>
+
 
 <section id="assettransforms">
 
@@ -352,6 +390,15 @@
       font-size: 70%;
       min-width: 10px;
       font-weight: bold;
+    }
+
+    .blueprint .key {
+      background-color: lightgray;
+      color: #444;
+      border-radius: 3px;
+      padding: 1px 4px;
+      font-size: 80%;
+      text-transform: uppercase;
     }
 
 
