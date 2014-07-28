@@ -10,7 +10,7 @@ class BlueprintPlugin extends BasePlugin
 
     function getVersion()
     {
-        return '0.4';
+        return '0.5';
     }
 
     function getDeveloper()

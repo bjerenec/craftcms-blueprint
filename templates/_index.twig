@@ -26,7 +26,7 @@
           <td width="40%">{% if first.handle is defined %}{{ first.handle }}{% endif %}</td>
         </tr>
 
-        {% for field in values %}
+        {% for field in values if field.fId %}
           <tr class="level1 compact fields" data-l0="{{ l0 }}">
               <td class="name"><a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a> {% if field.fTranslatable %}<span class="translatable" title="{{ 'Translatable'|t }}">T</span> {% endif %}</td>
               <td>{{ field.fType }}</td>
@@ -175,7 +175,7 @@
         <td> </td>
       </tr>
 
-      {% for field in values %}
+      {% for field in values if field.fId %}
         <tr class="child compact fields level1" data-l0="{{ l0 }}">
             <td class="name"><a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a> {% if field.fTranslatable %}<span class="translatable" title="{{ 'Translatable'|t }}">T</span> {% endif %}</td>
             <td class="capitalize">{{ field.fType }}</td>
@@ -213,18 +213,25 @@
     <td class="code">{{ mfsByParent[0].parentHandle }}</td>
   </tr>
 
-    {% for mfEntryType, mfsByEntryType in mfsByParent | group('name') %}
+    {% for mfEntryType, mfsByEntryType in mfsByParent  | group('name') %}
 
       {% set l1 = l0 ~ '-l1-' ~ loop.index %}
 
+
       <tr class="level1 compact {{ l1 }}" data-l0="{{ l0 }}">
-        <td class="name"><strong>{{ mfEntryType }}</strong> <span class="items-num">{{ mfsByEntryType|length }} {{ 'field(s)'|t }}</span></td>
+        <td class="name">
+          {% if mfsByEntryType[0].id %}
+          <strong>{{ mfEntryType }}</strong> <span class="items-num">{{ mfsByEntryType|length }} {{ 'field(s)'|t }}</span>
+          {% else %}
+          <em>{{ 'No block type defined' }}</em>
+          {% endif %}
+          </td>
         <td>{{ 'MatrixBlockType'|t }}</td>
         <td class="code">{{ mfsByEntryType[0].handle }}</td>
       </tr>
 
 
-      {% for field in mfsByEntryType %}
+      {% for field in mfsByEntryType if field.fId %}
 
         <tr class="compact fields level2" data-l0="{{ l0 }}" data-l1="{{ l1 }}">
             <td class="name">
@@ -282,7 +289,7 @@
         {# <td>{% if first.handle is defined %}{{ first.handle }}{% endif %}</td> #}
       </tr>
 
-      {% for field in values %}
+      {% for field in values if field.fId %}
         <tr class="level1 compact fields" data-l0="{{ l0 }}">
             <td class="name"><a href="{{ url('settings/fields/edit/' ~ field.fId) }}">{{ field.fName }}</a> {% if field.fTranslatable %}<span class="translatable" title="{{ 'Translatable'|t }}">T</span> {% endif %}</td>
             <td colspan="2">{{ field.fType }}</td>
@@ -379,6 +386,8 @@
       font-size: 80%;
       min-width: 10px;
       font-weight: normal;
+
+      display: none;
     }
 
     .blueprint .translatable {

@@ -40,13 +40,15 @@ class BlueprintController extends BaseController
 
     private function _getMatrixFieldsAndRelatedFields()
     {
+
       $mfs = craft()->db->createCommand()
             ->select('m.handle, m.name, m.id, pf.id parentId, pf.name parentName, pf.handle parentHandle, f.id fId, f.name fName, f.handle fHandle, f.type fType, f.translatable fTranslatable')
-            ->from('matrixblocktypes m')
-            ->join('fields pf', 'm.fieldId=pf.id')
-            ->join('fieldlayouts fl', 'm.fieldLayoutId=fl.id')
-            ->join('fieldlayoutfields flf', 'fl.id=flf.layoutId')
-            ->join('fields f', 'flf.fieldId=f.id')
+            ->from('fields pf')
+            ->leftJoin('matrixblocktypes m', 'pf.id=m.fieldId')
+            ->leftJoin('fieldlayouts fl', 'm.fieldLayoutId=fl.id')
+            ->leftJoin('fieldlayoutfields flf', 'fl.id=flf.layoutId')
+            ->leftjoin('fields f', 'flf.fieldId=f.id')
+            ->where("pf.type='Matrix'")
             ->order('m.name, fName')
             ->queryAll();
 
@@ -94,8 +96,8 @@ class BlueprintController extends BaseController
             ->select($sourceFields . ', f.id fId, f.name fName, f.handle fHandle, f.type fType, f.translatable fTranslatable')
             ->from("$sourceName s")
             ->join('fieldlayouts fl', 's.fieldLayoutId=fl.id')
-            ->join('fieldlayoutfields flf', 'fl.id=flf.layoutId')
-            ->join('fields f', 'flf.fieldId=f.id')
+            ->leftJoin('fieldlayoutfields flf', 'fl.id=flf.layoutId')
+            ->leftJoin('fields f', 'flf.fieldId=f.id')
             ->order('s.name, fName')
             ->queryAll();
 

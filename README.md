@@ -16,10 +16,14 @@ To install Blueprint:
 ## TODO
 
 * Test
-* Remove from CP main menu?
 
 
 ## Changelog
+
+### 0.5
+
+* Fixed more issues (categories, tags, matrixfields,...) where fields/fieldlayouts were not defined
+
 
 ### 0.4
 
