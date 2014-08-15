@@ -523,10 +523,17 @@
 
     $('a.find-field').click(function (e) {
       e.preventDefault();
-      var find = 'h:' + $(this).parent().text().replace($(this).text(),'').trim();
+      var $this = $(this);
+      $this.toggleClass('active');
+
+      if ($this.hasClass('active')) {
+        var find = 'h:' + $(this).parent().text().replace($(this).text(),'').trim();
+      } else {
+        var find = '';
+      }
+
       $('#bp-search').val(find);
       filterTables(find);
-
     });
 
 
