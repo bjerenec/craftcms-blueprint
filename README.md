@@ -51,3 +51,7 @@ To install Blueprint:
 ### 0.1
 
 * Initial release
+
+## Credit
+
+"Map" icon by [Fabiano Coelho](https://thenounproject.com/failureiscool/) from the Noun Project
